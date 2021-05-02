@@ -8,6 +8,14 @@ table, th, td {
   .iconDesc{
     font-size: large;
   }
-  #menuButton{
+  .menuButton{
     margin: auto;
+  }
+
+  .menuButton:hover{
+    cursor: pointer;
+  }
+
+  a {
+    text-decoration: none;
   }
