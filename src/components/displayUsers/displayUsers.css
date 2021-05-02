@@ -1,0 +1,13 @@
+table, th, td {
+    border-collapse: collapse;
+  }
+  th, td {
+    width: 200px;
+    text-align: left;
+  }
+  .iconDesc{
+    font-size: large;
+  }
+  #menuButton{
+    margin: auto;
+  }
