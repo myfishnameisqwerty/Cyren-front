@@ -31,7 +31,7 @@ export default function CreateUser(props) {
     setNameError("Name should contain only the characters: a-z ,.'-");
     if (
       nameRef.current.value &&
-      /^([a-zA-Z\s.'é-]+)$/.test(nameRef.current.value)
+      /^([a-zA-Z\s.'-]+)$/.test(nameRef.current.value)
     ) {
       setValidName("valid");
       setNameError("");
