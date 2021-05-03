@@ -17,7 +17,7 @@ export default function CreateUser(props) {
 
   function createUser() {
     if (!emailError && !nameError) {
-      let newData = new Object();
+      let newData = {};
       newData.email = emailRef.current.value;
       newData.name = nameRef.current.value;
       newData.dragons = dragonsRef.current.value;
@@ -106,9 +106,11 @@ export default function CreateUser(props) {
           </tr>
         </tbody>
       </table>
-      <Button variant="contained" id="submitButton" onClick={createUser}>
-        Create
-      </Button>
+      <div className="buttons">
+        <Button variant="contained" id="submitButton" onClick={createUser}>
+          Create
+        </Button>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
-import { fetchUsers } from "../../redux";
+import { fetchUsers, sortUsers, deleteRequest, filterUsers } from "../../redux";
 import { NavLink, Link } from "react-router-dom";
 import {
   Button,
@@ -10,38 +10,41 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import EditIcon from "@material-ui/icons/Edit";
-import LockIcon from "@material-ui/icons/Lock";
-import AddIcon from "@material-ui/icons/Add";
-import DeleteIcon from "@material-ui/icons/Delete";
-import UpdateIcon from "@material-ui/icons/Update";
+import {
+  Edit as EditIcon,
+  Lock as LockIcon,
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Update as UpdateIcon,
+} from "@material-ui/icons";
 import "./displayUsers.css";
-import axios from "axios";
 
-function DisplayUsers({ userData, fetchUsers }) {
-  const columns = ["Select", "Name", "Email", "Dragons", "Edit"];
+
+function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
+  const columns = ["Name", "Email", "Dragons"];
+  const [sort, setSort] = useState({ key: "name", order: 1 });
   useEffect(() => {
     fetchUsers();
   }, []);
+  const findRef = useRef(null)
   const [open, setOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState([]);
+  const [dataOnPage, setDataOnPage] = useState(5)
+  const [usersToDelete, setUsersToDelete] = useState([]);
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };
-  function deleteRequest() {
-    userToDelete.forEach((id) => {
-      axios
-        .delete(`${process.env.REACT_APP_SERVER_ADDRESS}/users/${id}`)
-        .then(() => fetchUsers());
-    });
 
-    handleClose();
+  function changeSort(key) {
+    let newSort = { ...sort };
+    if (sort.key === key) newSort.order *= -1;
+    else newSort = { key: key, order: 1 };
+    setSort(newSort);
+    sortUsers(newSort.key, newSort.order);
   }
-
+  
   return userData.loading ? (
     <h2>Loading</h2>
   ) : userData.error ? (
@@ -63,40 +66,101 @@ function DisplayUsers({ userData, fetchUsers }) {
                     </Button>
                   </NavLink>
                 </td>
-
                 <td>
-                  <div onClick={handleClickOpen} className="menuButton">
-                    <DeleteIcon />
-                  </div>
+                  <input
+                    ref={findRef}
+                    type="text"
+                    name="find"
+                    id="find"
+                    placeholder="Find user by name"
+                  />
+                  <Button size="small" onClick={()=> filterUsers(findRef.current.value)}>Find</Button>
                 </td>
                 <td>
                   <div onClick={fetchUsers} className="menuButton">
                     <UpdateIcon />
                   </div>
                 </td>
+                <td>
+                  <div onClick={handleClickOpen} className="menuButton">
+                    <DeleteIcon />
+                  </div>
+                </td>
               </tr>
+
               <tr>
+                <th>Select</th>
                 {columns.map((header, i) => (
-                  <th key={i}>{header}</th>
+                  <th key={i}>
+                    <div
+                      className="sortOrder"
+                      onClick={() => changeSort(header.toLocaleLowerCase())}
+                    >
+                      {header}
+                      <span className="upDown">
+                        <span
+                          style={{
+                            color: getColor(header, 1),
+                          }}
+                        >
+                          ▲
+                        </span>
+                        <span
+                          style={{
+                            color: getColor(header, -1),
+                          }}
+                        >
+                          ▼
+                        </span>
+                      </span>
+                    </div>
+                  </th>
                 ))}
+                <th>
+                  <div
+                    className="sortOrder"
+                    onClick={() => changeSort("fetched")}
+                  >
+                    Edit
+                    <span className="upDown">
+                      <span
+                        style={{
+                          color: getColor("fetched", 1),
+                        }}
+                      >
+                        ▲
+                      </span>
+                      <span
+                        style={{
+                          color: getColor("fetched", -1),
+                        }}
+                      >
+                        ▼
+                      </span>
+                    </span>
+                  </div>
+                </th>
               </tr>
             </thead>
             <tbody>
+              
               {userData.users.map((user, i) => (
-                <tr key={user.id}>
+                i <= dataOnPage &&
+                <tr key={i}>
                   <td>
                     <input
                       type="checkbox"
                       value={user.id}
                       disabled={user.fetched}
+                      style={{width:"20px"}}
                       onClick={(e) => {
-                        let users = [...userToDelete];
+                        let users = [...usersToDelete];
                         if (e.target.checked) users.push(e.target.value);
                         else
                           users = users.filter(
                             (id) => id !== e.target.value.id
                           );
-                        setUserToDelete(users);
+                        setUsersToDelete(users);
                       }}
                     />
                   </td>
@@ -115,6 +179,7 @@ function DisplayUsers({ userData, fetchUsers }) {
                 </tr>
               ))}
             </tbody>
+            
           </table>
         )}
       </div>
@@ -129,31 +194,50 @@ function DisplayUsers({ userData, fetchUsers }) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you shure, that you want to delete this user?
+            This action is irreversible. Please confirm.
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             No
           </Button>
-          <Button onClick={() => deleteRequest()} color="primary" autoFocus>
+          <Button
+            onClick={() => {
+              deleteRequest(usersToDelete).then(() =>
+                fetchUsers(sort.key, sort.order)
+              );
+              handleClose();
+            }}
+            color="primary"
+            autoFocus
+          >
             Yes
           </Button>
         </DialogActions>
       </Dialog>
     </div>
   );
+
+  function getColor(header, order) {
+    return sort.key === header.toLocaleLowerCase() && sort.order === order
+      ? "black"
+      : "rgb(123, 123, 123)";
+  }
 }
 
 const mapStateToProps = (state) => {
   return {
-    userData: state.user,
+    userData: state.user
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    fetchUsers: () => dispatch(fetchUsers()),
+    fetchUsers: (sortKey, sortOrder) =>
+      dispatch(fetchUsers(sortKey, sortOrder)),
+    sortUsers: (key, order) => dispatch(sortUsers(key, order)),
+    deleteRequest: (ids) => dispatch(deleteRequest(ids)),
+    filterUsers:(name)=> dispatch(filterUsers(name))
   };
 };
 

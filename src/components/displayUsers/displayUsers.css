@@ -2,11 +2,14 @@ table, th, td {
     border-collapse: collapse;
   }
   th, td {
-    width: 200px;
+    width: 250px;
     text-align: left;
   }
   .iconDesc{
     font-size: large;
+  }
+  input#find{
+    width: 150px
   }
   .menuButton{
     margin: auto;
@@ -18,4 +21,12 @@ table, th, td {
 
   a {
     text-decoration: none;
+  }
+
+  .upDown{
+    padding-left: 10px;
+  }
+ 
+  .sortOrder:hover{
+    cursor: pointer;
   }
