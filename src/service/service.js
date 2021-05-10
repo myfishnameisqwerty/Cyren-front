@@ -30,7 +30,9 @@ export const createUser = (data) => {
   let promise = new Promise((resolve, reject) => {
     axios
       .post(`${process.env.REACT_APP_SERVER_ADDRESS}/users`, data)
-      .then((response) => resolve(response.data))
+      .then((response) => {
+        resolve(response.data);
+      })
       .catch((error) => reject(error.message));
   });
   return promise;
@@ -43,4 +45,20 @@ export const updateUser = (id, data) => {
       .catch((err) => reject(err.message));
   });
   return promise;
+};
+
+export const MyVeryCustomSwapMethodForAnyObject = (obj) => {
+  return Object.keys(obj).reduce((converted, key) => {
+    if (!Array.isArray(obj[key])) obj[key] = [obj[key]];
+    obj[key].forEach((innerKey) => {
+      if (
+        typeof innerKey === "string" &&
+        innerKey.length > 0 &&
+        isNaN(innerKey[0]) &&
+        innerKey.split(' ').length === 1
+      )
+        converted[innerKey] = key;
+    });
+    return converted;
+  }, {});
 };

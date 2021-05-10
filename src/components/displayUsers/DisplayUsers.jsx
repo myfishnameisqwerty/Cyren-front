@@ -27,7 +27,7 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
   const [sort, setSort] = useState({ key: "name", order: 1 });
   
   useEffect(() => {
-    fetchUsers();
+    fetchUsers()
   }, [])
   const findRef = useRef(null)
   const [open, setOpen] = useState(false);
@@ -47,7 +47,6 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
     setSort(newSort);
     sortUsers(newSort.key, newSort.order);
   }
-  
   return userData.loading ? (
     <H2>Loading</H2>
   ) : userData.error ? (

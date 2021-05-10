@@ -1,6 +1,5 @@
-import axios from "axios";
 import React, { useState, useRef } from "react";
-import {createUser as createRequest} from '../../service/service'
+import {createUser as createRequest, getUsers} from '../../service/service'
 import {CustomButton, CustomInput, Buttons, Table, H2} from '../../service/customStyle'
 import isEmail from "validator/lib/isEmail";
 import HomeIcon from "@material-ui/icons/Home";
@@ -40,12 +39,9 @@ export default function CreateUser(props) {
   function checkEmail() {
     setValidEmail("invalid");
     if (isEmail(emailRef.current.value)) {
-      axios
-        .get(
-          `${process.env.REACT_APP_SERVER_ADDRESS}/users?filter={"email":"${emailRef.current.value}"}`
-        )
+      getUsers({email:emailRef.current.value})
         .then((res) => {
-          if (res && res.data.length === 0) {
+          if (res && res.length === 0) {
             setEmailError(null);
             setValidEmail("valid");
           } else setEmailError("Email is allredy exists in database");
