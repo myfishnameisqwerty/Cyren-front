@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
-import { fetchUsers, sortUsers, deleteRequest, filterUsers } from "../../redux";
+import {CustomButton, CustomInput, Table, H2, TH, HoverDiv} from '../../service/customStyle'
+import { fetchUsers, sortUsers, filterUsers } from "../../redux";
 import { NavLink, Link } from "react-router-dom";
 import {
   Button,
@@ -18,14 +19,16 @@ import {
   Update as UpdateIcon,
 } from "@material-ui/icons";
 import "./displayUsers.css";
+import { deleteUser } from "../../service/service";
 
 
 function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
   const columns = ["Name", "Email", "Dragons"];
   const [sort, setSort] = useState({ key: "name", order: 1 });
+  
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [])
   const findRef = useRef(null)
   const [open, setOpen] = useState(false);
   const [dataOnPage, setDataOnPage] = useState(5)
@@ -46,58 +49,59 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
   }
   
   return userData.loading ? (
-    <h2>Loading</h2>
+    <H2>Loading</H2>
   ) : userData.error ? (
-    <h2>{userData.error}</h2>
+    <H2>{userData.error}</H2>
   ) : (
     <div>
-      <h2>My users</h2>
+      <H2>My users</H2>
 
       <div>
         {userData && userData.users && (
-          <table>
+          <Table>
             <thead>
               <tr>
                 <td>
                   <NavLink to={`/create/`}>
-                    <Button variant="contained" className="menuButton">
+                    <CustomButton textSize="20px">
                       <AddIcon />
                       Create user
-                    </Button>
+                    </CustomButton>
                   </NavLink>
                 </td>
                 <td>
-                  <input
+                  <CustomInput
                     ref={findRef}
                     type="text"
                     name="find"
                     id="find"
+                    width="150px"
                     placeholder="Find user by name"
                   />
                   <Button size="small" onClick={()=> filterUsers(findRef.current.value)}>Find</Button>
                 </td>
                 <td>
-                  <div onClick={fetchUsers} className="menuButton">
+                  <HoverDiv onClick={fetchUsers} className="menuButton">
                     <UpdateIcon />
-                  </div>
+                  </HoverDiv>
                 </td>
                 <td>
-                  <div onClick={handleClickOpen} className="menuButton">
+                  <HoverDiv onClick={handleClickOpen} className="menuButton">
                     <DeleteIcon />
-                  </div>
+                  </HoverDiv>
                 </td>
               </tr>
 
               <tr>
-                <th>Select</th>
+                <TH>Select</TH>
                 {columns.map((header, i) => (
-                  <th key={i}>
-                    <div
+                  <TH key={i}>
+                    <HoverDiv
                       className="sortOrder"
                       onClick={() => changeSort(header.toLocaleLowerCase())}
                     >
                       {header}
-                      <span className="upDown">
+                      <span style={{paddingLeft:'10px'}}>
                         <span
                           style={{
                             color: getColor(header, 1),
@@ -113,10 +117,10 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
                           ▼
                         </span>
                       </span>
-                    </div>
-                  </th>
+                    </HoverDiv>
+                  </TH>
                 ))}
-                <th>
+                <TH >
                   <div
                     className="sortOrder"
                     onClick={() => changeSort("fetched")}
@@ -139,7 +143,7 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
                       </span>
                     </span>
                   </div>
-                </th>
+                </TH>
               </tr>
             </thead>
             <tbody>
@@ -148,7 +152,7 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
                 i <= dataOnPage &&
                 <tr key={i}>
                   <td>
-                    <input
+                    <CustomInput
                       type="checkbox"
                       value={user.id}
                       disabled={user.fetched}
@@ -180,7 +184,7 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
               ))}
             </tbody>
             
-          </table>
+          </Table>
         )}
       </div>
       <Dialog
@@ -203,9 +207,9 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
           </Button>
           <Button
             onClick={() => {
-              deleteRequest(usersToDelete).then(() =>
-                fetchUsers(sort.key, sort.order)
-              );
+              deleteUser(usersToDelete).then(() =>
+              fetchUsers(sort.key, sort.order)
+            );
               handleClose();
             }}
             color="primary"
@@ -236,7 +240,6 @@ const mapDispatchToProps = (dispatch) => {
     fetchUsers: (sortKey, sortOrder) =>
       dispatch(fetchUsers(sortKey, sortOrder)),
     sortUsers: (key, order) => dispatch(sortUsers(key, order)),
-    deleteRequest: (ids) => dispatch(deleteRequest(ids)),
     filterUsers:(name)=> dispatch(filterUsers(name))
   };
 };

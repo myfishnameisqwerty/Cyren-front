@@ -1,8 +1,7 @@
-import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
-import { deleteRequest } from "../../redux";
+import {deleteUser as deleteRequest, getUsers, updateUser} from '../../service/service'
+import {CustomButton, CustomInput, Buttons, Table, H2} from '../../service/customStyle'
 import {
-  Button,
   Dialog,
   DialogActions,
   DialogContent,
@@ -10,7 +9,7 @@ import {
   DialogTitle,
 } from "@material-ui/core";
 import { NavLink } from "react-router-dom";
-import "../form.css";
+
 import HomeIcon from "@material-ui/icons/Home";
 export default function EditUser(props) {
   const [user, setUser] = useState(null);
@@ -19,6 +18,9 @@ export default function EditUser(props) {
   const [open, setOpen] = useState(false);
   const nameRef = useRef(null);
   const dragonsRef = useRef(null);
+  
+
+
   function checkName() {
     setValidName("invalid");
     setNameError("Name should contain only the characters: a-z ,.'-");
@@ -49,39 +51,33 @@ export default function EditUser(props) {
       let newData = new Object();
       newData.name = nameRef.current.value;
       newData.dragons = dragonsRef.current.value;
-      axios
-        .put(
-          `${process.env.REACT_APP_SERVER_ADDRESS}/users/${props.match.params.id}`,
-          newData
-        )
-        .then(() => props.history.push("/"));
+      updateUser(props.match.params.id, newData).then(() => props.history.push("/"))
     }
   }
   useEffect(() => {
-    axios
-      .get(
-        `${process.env.REACT_APP_SERVER_ADDRESS}/users?filter={"id":"${props.match.params.id}"}`
-      )
+    getUsers({id:`${props.match.params.id}`})
       .then((res) => {
-        setUser(res.data[0]);
+        setUser(res[0]);
       });
   }, []);
   return (
     <div>
       <NavLink to="/">
         <HomeIcon fontSize="large" />
+        
+    
       </NavLink>{" "}
       {user ? (
         <div id="container">
-          <h2>Edit user</h2>
-          <table>
+          <H2>Edit user</H2>
+          <Table>
             <tbody>
               <tr>
                 <td>
                   <label htmlFor="email">Email</label>
                 </td>
                 <td>
-                  <input name="email" disabled defaultValue={user.email} />
+                  <CustomInput name="email" disabled defaultValue={user.email} />
                 </td>
               </tr>
               <tr>
@@ -89,7 +85,7 @@ export default function EditUser(props) {
                   <label htmlFor="name">Name</label>
                 </td>
                 <td>
-                  <input
+                  <CustomInput
                     ref={nameRef}
                     name="name"
                     onBlur={checkName}
@@ -106,7 +102,7 @@ export default function EditUser(props) {
                   <label htmlFor="dragons">Dragons</label>
                 </td>
                 <td>
-                  <input
+                  <CustomInput
                     type="number"
                     ref={dragonsRef}
                     name="dragons"
@@ -116,23 +112,12 @@ export default function EditUser(props) {
                 </td>
               </tr>
             </tbody>
-          </table>
-          <div className="buttons">
-            <Button
-              variant="contained"
-              id="submitButton"
-              onClick={submitUpdate}
-            >
-              Edit
-            </Button>
-
-            <Button
-              variant="contained"
-              id="deleteButton"
-              onClick={handleClickOpen}
-            >
-              DELETE
-            </Button>
+          </Table>
+          <Buttons>
+          <CustomButton green fat onClick={submitUpdate}>Edit</CustomButton>
+            
+            <CustomButton red fat onClick={handleClickOpen}>Delete</CustomButton>
+            
             <Dialog
               open={open}
               onClose={handleClose}
@@ -148,15 +133,15 @@ export default function EditUser(props) {
                 </DialogContentText>
               </DialogContent>
               <DialogActions>
-                <Button onClick={handleClose} color="primary">
+                <CustomButton onClick={handleClose} transparent>
                   No
-                </Button>
-                <Button onClick={deleteUser} color="primary" autoFocus>
+                </CustomButton>
+                <CustomButton onClick={deleteUser} transparent autoFocus>
                   Yes
-                </Button>
+                </CustomButton>
               </DialogActions>
             </Dialog>
-          </div>
+          </Buttons>
         </div>
       ) : (
         <p>loading...</p>

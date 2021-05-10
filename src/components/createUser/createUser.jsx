@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useState, useRef } from "react";
-import { Button } from "@material-ui/core";
+import {createUser as createRequest} from '../../service/service'
+import {CustomButton, CustomInput, Buttons, Table, H2} from '../../service/customStyle'
 import isEmail from "validator/lib/isEmail";
 import HomeIcon from "@material-ui/icons/Home";
 import { NavLink } from "react-router-dom";
-import "../form.css";
+
 
 export default function CreateUser(props) {
   const [validEmail, setValidEmail] = useState(null);
@@ -21,9 +22,8 @@ export default function CreateUser(props) {
       newData.email = emailRef.current.value;
       newData.name = nameRef.current.value;
       newData.dragons = dragonsRef.current.value;
-      axios
-        .post(`${process.env.REACT_APP_SERVER_ADDRESS}/users`, newData)
-        .then((response) => props.history.push("/"));
+      createRequest(newData).then(()=> props.history.push("/"));
+      
     }
   }
   function checkName() {
@@ -61,15 +61,15 @@ export default function CreateUser(props) {
       <NavLink to="/">
         <HomeIcon fontSize="large" />
       </NavLink>
-      <h2>Create user</h2>
-      <table>
+      <H2>Create user</H2>
+      <Table>
         <tbody>
           <tr>
             <td>
               <label htmlFor="email">Email</label>
             </td>
             <td>
-              <input
+              <CustomInput
                 ref={emailRef}
                 name="email"
                 onBlur={checkEmail}
@@ -85,7 +85,7 @@ export default function CreateUser(props) {
               <label htmlFor="name">Name</label>
             </td>
             <td>
-              <input
+              <CustomInput
                 ref={nameRef}
                 name="name"
                 onBlur={checkName}
@@ -101,16 +101,17 @@ export default function CreateUser(props) {
               <label htmlFor="dragons">Dragons</label>
             </td>
             <td>
-              <input type="number" min="0" ref={dragonsRef} name="dragons" />
+             
+              <CustomInput type="number" min="0" ref={dragonsRef} name="dragons" />
             </td>
           </tr>
         </tbody>
-      </table>
-      <div className="buttons">
-        <Button variant="contained" id="submitButton" onClick={createUser}>
+      </Table>
+      <Buttons>
+        <CustomButton fat green onClick={createUser}>
           Create
-        </Button>
-      </div>
+        </CustomButton>
+      </Buttons>
     </div>
   );
 }

@@ -21,12 +21,14 @@ const reducer = (state = initialState, action) => {
       };
     case FETCH_USERS_SUCCESS:
       return {
+        ...state,
         loading: false,
         users: action.payload,
         error: "",
       };
     case FETCH_USERS_FAILURE:
       return {
+        ...state,
         loading: false,
         users: [],
         error: action.payload,
@@ -39,13 +41,14 @@ const reducer = (state = initialState, action) => {
         return order;
       });
       return {
+        ...state,
         users: sortedUsers,
       };
     case FILTER_USERS:
       let filtredUsers = state.users.filter((user) =>
         user.name.includes(action.payload)
       );
-      return { users: filtredUsers };
+      return { ...state, users: filtredUsers };
     default:
       return state;
   }
