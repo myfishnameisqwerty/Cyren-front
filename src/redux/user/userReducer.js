@@ -35,17 +35,7 @@ const reducer = (state = initialState, action) => {
         users: [],
         error: action.payload,
       };
-    case SORT_USERS:
-      const sortedUsers = [...state.users];
-      const { key, order } = action.payload;
-      sortedUsers.sort((a, b) => {
-        if (a[key] < b[key]) return -1 * order;
-        return order;
-      });
-      return {
-        ...state,
-        users: sortedUsers,
-      };
+    
     case FILTER_USERS:
       let filtredUsers = state.users.filter((user) =>
         user.name.includes(action.payload)

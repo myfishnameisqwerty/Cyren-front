@@ -53,9 +53,7 @@ export const MyVeryCustomSwapMethodForAnyObject = (obj) => {
     obj[key].forEach((innerKey) => {
       if (
         typeof innerKey === "string" &&
-        innerKey.length > 0 &&
-        isNaN(innerKey[0]) &&
-        innerKey.split(' ').length === 1
+        innerKey.length > 0
       )
         converted[innerKey] = key;
     });

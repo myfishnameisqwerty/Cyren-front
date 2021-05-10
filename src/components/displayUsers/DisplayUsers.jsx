@@ -120,8 +120,7 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
                   </TH>
                 ))}
                 <TH >
-                  <div
-                    className="sortOrder"
+                  <HoverDiv
                     onClick={() => changeSort("fetched")}
                   >
                     Edit
@@ -141,12 +140,11 @@ function DisplayUsers({ userData, fetchUsers, sortUsers, filterUsers }) {
                         ▼
                       </span>
                     </span>
-                  </div>
+                  </HoverDiv>
                 </TH>
               </tr>
             </thead>
             <tbody>
-              
               {userData.users.map((user, i) => (
                 i <= dataOnPage &&
                 <tr key={i}>
