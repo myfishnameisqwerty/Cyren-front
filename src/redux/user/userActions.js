@@ -1,5 +1,6 @@
 import { getUsers } from "../../service/service";
 import store from "../store"
+
 import {
   FETCH_USERS_REQUEST,
   FETCH_USERS_SUCCESS,
@@ -25,6 +26,9 @@ export const filterUsers = (name) => {
   };
 };
 export const sortUsers = (key, order) => {
+  let a = {'a':'z'}
+  
+  
   return (dispatch) => {
 
     let {users} = store.getState().user
@@ -37,6 +41,7 @@ export const sortUsers = (key, order) => {
 };
 
 export const fetchUsersRequest = () => {
+  
   return {
     type: FETCH_USERS_REQUEST,
   };

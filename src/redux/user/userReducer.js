@@ -1,4 +1,3 @@
-import { MyVeryCustomSwapMethodForAnyObject } from "../../service/service";
 import {
   FETCH_USERS_REQUEST,
   FETCH_USERS_SUCCESS,
@@ -13,12 +12,14 @@ const initialState = {
   error: "",
 };
 
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
     case FETCH_USERS_REQUEST:
       return Object.assign(state, {loading: true});
 
     case FETCH_USERS_SUCCESS:
+      
       // return Object.assign(state, {loading: false, users: action.payload, error: ""})
       return{
         ...state,

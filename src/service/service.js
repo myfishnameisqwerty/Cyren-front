@@ -47,16 +47,3 @@ export const updateUser = (id, data) => {
   return promise;
 };
 
-export const MyVeryCustomSwapMethodForAnyObject = (obj) => {
-  return Object.keys(obj).reduce((converted, key) => {
-    if (!Array.isArray(obj[key])) obj[key] = [obj[key]];
-    obj[key].forEach((innerKey) => {
-      if (
-        typeof innerKey === "string" &&
-        innerKey.length > 0
-      )
-        converted[innerKey] = key;
-    });
-    return converted;
-  }, {});
-};
